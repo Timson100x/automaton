@@ -189,8 +189,18 @@ async function run(): Promise<void> {
   // Load config — first run triggers interactive setup wizard
   let config = loadConfig();
   if (!config) {
-    const { runSetupWizard } = await import("./setup/wizard.js");
-    config = await runSetupWizard();
+    const { hasHeadlessEnv, runHeadlessSetup } = await import("./setup/headless.js");
+    if (hasHeadlessEnv() || !process.stdin.isTTY) {
+      try {
+        config = await runHeadlessSetup();
+      } catch (err: any) {
+        logger.error(err.message);
+        process.exit(1);
+      }
+    } else {
+      const { runSetupWizard } = await import("./setup/wizard.js");
+      config = await runSetupWizard();
+    }
   }
 
   // Load wallet (chain-aware)
