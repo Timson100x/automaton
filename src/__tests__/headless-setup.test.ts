@@ -56,7 +56,14 @@ describe("headless setup", () => {
     await expect(runHeadlessSetup()).rejects.toThrow(/CREATOR_ADDRESS/);
   });
 
-  it("requires an inference key", async () => {
-    await expect(runHeadlessSetup()).rejects.toThrow(/CONWAY_API_KEY/);
+  it("fails clearly when no key is given and provisioning is impossible", async () => {
+    vi.doMock("../identity/provision.js", () => ({
+      provision: async () => { throw new Error("offline"); },
+      loadApiKeyFromConfig: () => undefined,
+    }));
+    vi.resetModules();
+    const mod = await import("../setup/headless.js");
+    await expect(mod.runHeadlessSetup()).rejects.toThrow(/CONWAY_API_KEY/);
+    vi.doUnmock("../identity/provision.js");
   });
 });

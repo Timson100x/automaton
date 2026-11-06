@@ -65,9 +65,6 @@ export async function runHeadlessSetup(): Promise<AutomatonConfig> {
   const conwayKey = env.CONWAY_API_KEY?.trim() || "";
   const openaiApiKey = env.OPENAI_API_KEY?.trim() || undefined;
   const anthropicApiKey = env.ANTHROPIC_API_KEY?.trim() || undefined;
-  if (!conwayKey && !openaiApiKey && !anthropicApiKey) {
-    fail("set at least one of CONWAY_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY");
-  }
 
   const maxChildrenRaw = env.AUTOMATON_MAX_CHILDREN?.trim();
   const maxChildren = maxChildrenRaw === undefined || maxChildrenRaw === "" ? 0 : Number(maxChildrenRaw);
